@@ -1,21 +1,23 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from django.http import HttpResponse,Http404
-import datetime
-from django.core.mail import send_mail
-from mailmonikapp.models import Subscription,Newsletter
+
 from email.MIMEMultipart import MIMEMultipart
 from email.MIMEText import MIMEText
-from mailmonik.settings_local import usermail,password
 
+from django.core.mail import send_mail
+from django.http import HttpResponse,Http404
 from django.shortcuts import render
+
 import smtplib
 import hashlib
 import time
+import datetime
+
+from mailmonik.settings_local import usermail,password
+from mailmonikapp.models import Subscription,Newsletter
 
 # Create your views here.
 
-#dict = { "ghetiyaamit791@gmail.com","patelamit791@gmail.com","deepmehta899@gmail.com","ketavbhatt@gmail.com","menkudlekrutik@gmail.com","ikbalsinghdhanjal23@gmail.com","thecoders000@gmail.com","ronak01doshi@gmail.com"}
 
 def values():
 	global usermail
@@ -25,11 +27,10 @@ def values():
 
 
 
+
 def subscribe(request):
 	return render(request,"subscribe.html")
 
-
-dictionary = {}
 
 
 def subscription(request):
@@ -54,8 +55,10 @@ def subscription(request):
         msg['From'] = fromaddr
         msg['To'] = toaddr
         msg['Subject'] = "Confirmational Email"
- 
-        body = "Please Click On The Link To Subscribe: http://localhost:8000/subscription_complete/%s" %subkey 
+
+        domain = request.get_host()
+
+        body = "Please Click On The Link To Subscribe: http://{0}/subscription_complete/{1}".format(domain,subkey) 
         msg.attach(MIMEText(body, 'plain'))
  
         server = smtplib.SMTP('smtp.gmail.com', 587)
@@ -116,7 +119,9 @@ def subscription_complete(request,p):
         msg['To'] = toaddr
         msg['Subject'] = "Subscription Complete"
 
-        body = "Welcome To Doodle! Hope You Have A Great Time" + "To Unsubscribe Visit: http://localhost:8000/%s/unsubscribe" %unsubkeys
+        domain = request.get_host()
+
+        body = "Welcome To Doodle! Hope You Have A Great Time" + "To Unsubscribe Visit: http://{0}/{1}/unsubscribe".format(domain,unsubkeys)
         msg.attach(MIMEText(body, 'plain'))
 
         server = smtplib.SMTP('smtp.gmail.com', 587)
@@ -160,7 +165,9 @@ def mail(request):
             toaddr = u.email
             msg['To'] = toaddr
 
-            body = message + "To Unsubscribe Visit: http://localhost:8000/%s/unsubscribe" %u.unsubkey
+            domain = request.get_host()
+
+            body = message + "To Unsubscribe Visit: http://{0}/{1}/unsubscribe" .format(domain,unsubkey)
             msg.attach(MIMEText(body, 'plain'))
             text = msg.as_string()
 
@@ -197,3 +204,4 @@ def unsubscribed(request,p):
 	else:
 	    	html = "<html><body>Invalid Account</body></html>"
 	    	return HttpResponse(html)
+
