@@ -5,23 +5,55 @@
 	<title>MSG</title>
 </head>
 
+
+<style>
+	body {
+		background: #e2e1e0;
+		text-align: center;
+	}
+
+	.card {
+		background: #fff;
+		border-radius: 2px;
+		display: inline-block;
+		margin-top: 5%;
+		height: 55%;
+		position: relative;
+		width: 30%;
+		padding: 5%;
+	}
+
+	.card-1 {
+		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+		transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
+	}
+
+	.card-1:hover {
+		box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+	}
+</style>
+
 <body>
 
+	<div class="card card-1">
+		<form method='POST' action="/mail/">
+			<p>
+				SUBJECT:
+			</p>
+			<input type='text' name='sub' placeholder="Subject" />
+			<p>
+				MESSAGE:
+			</p>
+			<textarea type='text' name='msg' placeholder="Message" style="height:80px;width:250px;"></textarea>
+			<p>
+				CUSTOM HTML:
+			</p>
+			<textarea type='text' name='html' placeholder="Custom HTML" style="height:100px;width:250px;"></textarea>
+			<br></br>
+			<input type='submit' name='Submit' value='Submit' />
 
-	<form method='POST' action="/mail/">
-		<p>
-			SUBJECT: <input type='text' name='sub' />
-		</p>
-		<p>
-			MESSAGE: <input type='text' name='msg' />
-		</p>
-		<p>
-			CUSTOM HTML: <input type='text' name='html' />
-		</p>
-
-		<input type='submit' name='Submit' value='Submit' />
-
-	</form>
+		</form>
+	</div>
 
 
 </body>

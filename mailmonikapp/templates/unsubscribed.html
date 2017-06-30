@@ -1,25 +1,55 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 	<title>Confirmation</title>
 </head>
 {% load static %}
+<style>
+	body {
+		background: #e2e1e0;
+		text-align: center;
+	}
+
+	.card {
+		background: #fff;
+		border-radius: 2px;
+		display: inline-block;
+		margin-top: 5%;
+		height: 55%;
+		position: relative;
+		width: 30%;
+		padding: 5%;
+	}
+
+	.card-1 {
+		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+		transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
+	}
+
+	.card-1:hover {
+		box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+	}
+</style>
+
 <body>
 
-{% for item in instance %}
+	{% for item in instance %}
+	<div class="card card-1">
+		<form method='POST' action="/{{item.unsubkey}}/unsubscribed/" autocomplete="on">
 
-<form method='POST' action="/{{item.unsubkey}}/unsubscribed/" autocomplete="on">
+			{% endfor %}
 
-{% endfor %}
 
-	<p>
-		Do You Really Want To Unsubscribe?
-	</p>
+			<p>
+				Do You Really Want To Unsubscribe?
+			</p>
 
-    <input type='submit' name='Submit' value='Submit'  />
+			<input type='submit' name='YES' value='Submit' />
 
-</form>
-
+		</form>
+	</div>
 
 </body>
+
 </html>
