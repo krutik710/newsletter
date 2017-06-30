@@ -59,7 +59,9 @@ def subscription(request):
         domain = request.get_host()
 
         body = "Please Click On The Link To Subscribe: http://{0}/subscription_complete/{1}".format(domain,subkey) 
+        part1 = MIMEText(body, 'plain')
         msg.attach(MIMEText(body, 'plain'))
+
  
         server = smtplib.SMTP('smtp.gmail.com', 587)
         server.starttls()
@@ -150,6 +152,9 @@ def mail(request):
 	if request.method == 'POST':
 		message = request.POST.get('msg')
         subject = request.POST.get('sub')
+        html = request.POST.get('html')
+
+        
 
         user = Newsletter.objects.create(subject=subject,body=message)
 
@@ -167,8 +172,13 @@ def mail(request):
 
             domain = request.get_host()
 
-            body = message + "To Unsubscribe Visit: http://{0}/{1}/unsubscribe" .format(domain,unsubkey)
-            msg.attach(MIMEText(body, 'plain'))
+            body = message + "To Unsubscribe Visit: http://{0}/{1}/unsubscribe" .format(domain,u.unsubkey)
+
+            part2 = MIMEText(html,'html')
+            part1 = MIMEText(body, 'plain')
+
+            msg.attach(part1)
+            msg.attach(part2)
             text = msg.as_string()
 
             server.sendmail(fromaddr, toaddr, text)
@@ -204,4 +214,3 @@ def unsubscribed(request,p):
 	else:
 	    	html = "<html><body>Invalid Account</body></html>"
 	    	return HttpResponse(html)
-
