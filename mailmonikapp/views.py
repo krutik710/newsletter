@@ -18,6 +18,7 @@ from mailmonikapp.models import Subscription,Newsletter
 
 # Create your views here.
 
+#dict = { "ghetiyaamit791@gmail.com","patelamit791@gmail.com","deepmehta899@gmail.com","ketavbhatt@gmail.com","menkudlekrutik@gmail.com","ikbalsinghdhanjal23@gmail.com","thecoders000@gmail.com","ronak01doshi@gmail.com"}
 
 def values():
 	global usermail
@@ -37,7 +38,7 @@ def subscription(request):
 	if request.method == 'POST':
         
 		subscribermail = request.POST.get('email')
-
+        print subscribermail
 
         hash = hashlib.sha1()
         now = datetime.datetime.now()
@@ -140,7 +141,9 @@ def subscription_complete(request,p):
 
 def msg(request):
     if request.user.is_authenticated():
-        return render(request,"msg.html")
+        subjects = Newsletter.objects.all()
+        print subjects
+        return render(request,"msg.html",{ 'subject':subjects })
     else:
         html = "<html><body>Please First Login In Admin Panel</body></html>" 
         return HttpResponse(html)
@@ -150,19 +153,19 @@ def msg(request):
 
 def mail(request):
 	if request.method == 'POST':
-		message = request.POST.get('msg')
-        subject = request.POST.get('sub')
-        html = request.POST.get('html')
+		# message = request.POST.get('msg')
+        # subject = request.POST.get('sub')
+        # html = request.POST.get('html')
 
         
-
-        user = Newsletter.objects.create(subject=subject,body=message)
+        	sub = request.POST.get('sub')
+        	print sub 
 
         for u in Subscription.objects.filter(is_active=1):
             fromaddr = usermail
             msg = MIMEMultipart()
             msg['From'] = fromaddr
-            msg['Subject'] = subject
+            # msg['Subject'] = subject
  
             server = smtplib.SMTP('smtp.gmail.com', 587)
             server.starttls()
@@ -172,8 +175,11 @@ def mail(request):
 
             domain = request.get_host()
 
-            body = message + "To Unsubscribe Visit: http://{0}/{1}/unsubscribe" .format(domain,u.unsubkey)
-
+            newsletter = Newsletter.objects.get(subject=sub)
+            print newsletter
+            msg['Subject'] = newsletter.subject
+            body = newsletter.body + "To Unsubscribe Visit: http://{0}/{1}/unsubscribe" .format(domain,u.unsubkey)
+            html = newsletter.html
             part2 = MIMEText(html,'html')
             part1 = MIMEText(body, 'plain')
 

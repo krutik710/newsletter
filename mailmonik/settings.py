@@ -37,7 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'mailmonikapp'
+    'mailmonikapp',
+    'ckeditor',
 ]
 
 MIDDLEWARE = [
@@ -81,6 +82,12 @@ DATABASES = {
     }
 }
 
+CKEDITOR_CONFIGS = {
+    'content': {
+        'toolbar': 'standard',
+    },
+}
+
 
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
@@ -119,7 +126,16 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = '../mailmonikapp/static/'
 
+MEDIA_URL = '/media/'
+
+SETTINGS_DIR = os.path.dirname(os.path.dirname(__file__))
+PROJECT_PATH = os.path.join(SETTINGS_DIR, os.pardir)
+PROJECT_PATH = os.path.abspath(PROJECT_PATH)
+MEDIA_ROOT = os.path.join(PROJECT_PATH,'mailmonik/media')
+
+CKEDITOR_UPLOAD_PATH = "uploads/"
 
 try:
     from setting_local import *

@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html>
+{% load static %}
 
 <head>
-	<title>MSG</title>
+	<title>Mail</title>
 </head>
 
 
@@ -36,19 +37,14 @@
 <body>
 
 	<div class="card card-1">
+		<h3>Select The Subject To Mail</h3>
 		<form method='POST' action="/mail/">
-			<p>
-				SUBJECT:
-			</p>
-			<input type='text' name='sub' placeholder="Subject" />
-			<p>
-				MESSAGE:
-			</p>
-			<textarea type='text' name='msg' placeholder="Message" style="height:80px;width:250px;"></textarea>
-			<p>
-				CUSTOM HTML:
-			</p>
-			<textarea type='text' name='html' placeholder="Custom HTML" style="height:100px;width:250px;"></textarea>
+			<select name='sub'>
+				{% for item in subject %}
+				<option value="{{item.subject}}">{{item.subject}}</option>
+				{% endfor %}
+			</select>
+
 			<br></br>
 			<input type='submit' name='Submit' value='Submit' />
 
