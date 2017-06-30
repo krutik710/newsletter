@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Confirmation</title>
+</head>
+{% load static %}
+<body>
+
+{% for item in instance %}
+
+<form method='POST' action="/{{item.unsubkey}}/unsubscribed/" autocomplete="on">
+
+{% endfor %}
+
+	<p>
+		Do You Really Want To Unsubscribe?
+	</p>
+
+    <input type='submit' name='Submit' value='Submit'  />
+
+</form>
+
+
+</body>
+</html>
