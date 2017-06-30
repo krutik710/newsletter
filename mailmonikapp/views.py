@@ -18,7 +18,6 @@ from mailmonikapp.models import Subscription,Newsletter
 
 # Create your views here.
 
-#dict = { "ghetiyaamit791@gmail.com","patelamit791@gmail.com","deepmehta899@gmail.com","ketavbhatt@gmail.com","menkudlekrutik@gmail.com","ikbalsinghdhanjal23@gmail.com","thecoders000@gmail.com","ronak01doshi@gmail.com"}
 
 def values():
 	global usermail
@@ -124,8 +123,12 @@ def subscription_complete(request,p):
 
         domain = request.get_host()
 
-        body = "Welcome To Doodle! Hope You Have A Great Time" + "To Unsubscribe Visit: http://{0}/{1}/unsubscribe".format(domain,unsubkeys)
-        msg.attach(MIMEText(body, 'plain'))
+        body = "Welcome To Doodle! Hope You Have A Great Time"
+        part1 = MIMEText(body, 'plain')
+        unsubscribelink = "To Unsubscribe Visit: http://{0}/{1}/unsubscribe".format(domain,unsubkeys)
+        part2 = MIMEText(unsubscribelink, 'plain')
+        msg.attach(part1)
+        msg.attach(part1)
 
         server = smtplib.SMTP('smtp.gmail.com', 587)
         server.starttls()
@@ -178,13 +181,16 @@ def mail(request):
             newsletter = Newsletter.objects.get(subject=sub)
             print newsletter
             msg['Subject'] = newsletter.subject
-            body = newsletter.body + "To Unsubscribe Visit: http://{0}/{1}/unsubscribe" .format(domain,u.unsubkey)
+            body = newsletter.body 
             html = newsletter.html
             part2 = MIMEText(html,'html')
             part1 = MIMEText(body, 'plain')
+            unsubscribelink = "To Unsubscribe Visit: http://{0}/{1}/unsubscribe" .format(domain,u.unsubkey)
+            part3 = MIMEText(unsubscribelink,'plain ')
 
             msg.attach(part1)
             msg.attach(part2)
+            msg.attach(part3)
             text = msg.as_string()
 
             server.sendmail(fromaddr, toaddr, text)
@@ -220,3 +226,4 @@ def unsubscribed(request,p):
 	else:
 	    	html = "<html><body>Invalid Account</body></html>"
 	    	return HttpResponse(html)
+
