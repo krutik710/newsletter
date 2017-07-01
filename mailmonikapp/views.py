@@ -57,8 +57,9 @@ def subscription(request):
         msg['Subject'] = "Confirmational Email"
 
         domain = request.get_host()
+        scheme = request.is_secure() and "https" or "http"
 
-        body = "Please Click On The Link To Subscribe: http://{0}/subscription_complete/{1}".format(domain,subkey) 
+        body = "Please Click On The Link To Subscribe: {0}://{1}/subscription_complete/{2}".format(scheme,domain,subkey) 
         part1 = MIMEText(body, 'plain')
         msg.attach(MIMEText(body, 'plain'))
 
@@ -122,13 +123,15 @@ def subscription_complete(request,p):
         msg['Subject'] = "Subscription Complete"
 
         domain = request.get_host()
+        scheme = request.is_secure() and "https" or "http"
 
-        body = "Welcome To Doodle! Hope You Have A Great Time"
+        body = "Welcome! Hope You Have A Great Time"
         part1 = MIMEText(body, 'plain')
-        unsubscribelink = "To Unsubscribe Visit: http://{0}/{1}/unsubscribe".format(domain,unsubkeys)
+        unsubscribelink = "To Unsubscribe Visit: {0}://{1}/{2}/unsubscribe".format(scheme,domain,unsubkeys)
         part2 = MIMEText(unsubscribelink, 'plain')
+        
         msg.attach(part1)
-        msg.attach(part1)
+        msg.attach(part2)
 
         server = smtplib.SMTP('smtp.gmail.com', 587)
         server.starttls()
@@ -177,6 +180,7 @@ def mail(request):
             msg['To'] = toaddr
 
             domain = request.get_host()
+            scheme = request.is_secure() and "https" or "http"
 
             newsletter = Newsletter.objects.get(subject=sub)
             print newsletter
@@ -185,7 +189,7 @@ def mail(request):
             html = newsletter.html
             part2 = MIMEText(html,'html')
             part1 = MIMEText(body, 'plain')
-            unsubscribelink = "To Unsubscribe Visit: http://{0}/{1}/unsubscribe" .format(domain,u.unsubkey)
+            unsubscribelink = "To Unsubscribe Visit: {0}://{1}/{2}/unsubscribe" .format(scheme,domain,u.unsubkey)
             part3 = MIMEText(unsubscribelink,'plain ')
 
             msg.attach(part1)
@@ -226,4 +230,3 @@ def unsubscribed(request,p):
 	else:
 	    	html = "<html><body>Invalid Account</body></html>"
 	    	return HttpResponse(html)
-
