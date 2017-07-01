@@ -11,9 +11,11 @@ class SubscriptionAdmin(admin.ModelAdmin):
         return self.readonly_fields
 
 class NewsletterAdmin(admin.ModelAdmin):
+    list_display = ('subject','sent_at')
     search_fields = ('subject','body')
 
 
 admin.site.register(Newsletter,NewsletterAdmin)
 admin.site.register(Subscription,SubscriptionAdmin)
+
 

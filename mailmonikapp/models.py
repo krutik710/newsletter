@@ -2,6 +2,9 @@ from __future__ import unicode_literals
 
 from django.db import models
 from ckeditor.fields import RichTextField
+from django.contrib import admin
+import datetime
+
 
 # Create your models here.
 class Subscription(models.Model):
@@ -14,10 +17,12 @@ class Subscription(models.Model):
 		return str(self.email)
 
 
+
 class Newsletter(models.Model):
 	subject = models.CharField(max_length=1000)
 	body = models.TextField(blank=True)
 	html = RichTextField(config_name='content')
+	sent_at = models.DateTimeField(blank=True,null=True)
 
 	def __str__(self):
 		return self.subject

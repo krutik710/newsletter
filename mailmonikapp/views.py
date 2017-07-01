@@ -18,7 +18,6 @@ from mailmonikapp.models import Subscription,Newsletter
 
 # Create your views here.
 
-
 def values():
 	global usermail
 	usermail = usermail
@@ -37,7 +36,6 @@ def subscription(request):
 	if request.method == 'POST':
         
 		subscribermail = request.POST.get('email')
-        print subscribermail
 
         hash = hashlib.sha1()
         now = datetime.datetime.now()
@@ -76,7 +74,6 @@ def subscription(request):
         for u in Subscription.objects.all():
             checkmail.append(u.email)
 
-        print checkmail
         if subscribermail in checkmail:
             user = Subscription.objects.get(email=subscribermail)
             user.is_active = 0
@@ -98,21 +95,16 @@ def subscription_complete(request,p):
     subkeys = []
     for u in Subscription.objects.all():
         subkeys.append(u.subkey)
-        print subkeys
         email = u.email
-        print email
         unsubkeys = u.unsubkey
-        print p
         
+
     if p in subkeys:
         try:
-            print "HI"
             user = Subscription.objects.get(subkey=p)
-            print user
             user.is_active = 1
             user.save()
         except:
-            print "error"
             raise Http404
             
         fromaddr = usermail
@@ -129,7 +121,6 @@ def subscription_complete(request,p):
         part1 = MIMEText(body, 'plain')
         unsubscribelink = "To Unsubscribe Visit: {0}://{1}/{2}/unsubscribe".format(scheme,domain,unsubkeys)
         part2 = MIMEText(unsubscribelink, 'plain')
-        
         msg.attach(part1)
         msg.attach(part2)
 
@@ -147,8 +138,7 @@ def subscription_complete(request,p):
 
 def msg(request):
     if request.user.is_authenticated():
-        subjects = Newsletter.objects.all()
-        print subjects
+        subjects = Newsletter.objects.filter(sent_at=None)
         return render(request,"msg.html",{ 'subject':subjects })
     else:
         html = "<html><body>Please First Login In Admin Panel</body></html>" 
@@ -159,19 +149,14 @@ def msg(request):
 
 def mail(request):
 	if request.method == 'POST':
-		# message = request.POST.get('msg')
-        # subject = request.POST.get('sub')
-        # html = request.POST.get('html')
+	    sub = request.POST.get('sub')
 
-        
-        	sub = request.POST.get('sub')
-        	print sub 
+
 
         for u in Subscription.objects.filter(is_active=1):
             fromaddr = usermail
             msg = MIMEMultipart()
             msg['From'] = fromaddr
-            # msg['Subject'] = subject
  
             server = smtplib.SMTP('smtp.gmail.com', 587)
             server.starttls()
@@ -183,7 +168,7 @@ def mail(request):
             scheme = request.is_secure() and "https" or "http"
 
             newsletter = Newsletter.objects.get(subject=sub)
-            print newsletter
+
             msg['Subject'] = newsletter.subject
             body = newsletter.body 
             html = newsletter.html
@@ -201,6 +186,11 @@ def mail(request):
             server.quit()
 
         now = datetime.datetime.now()
+
+        u = Newsletter.objects.get(subject=sub)
+        u.sent_at = now
+        u.save()
+
         html = "<html><body>Mail send at %s.</body></html>" % now
         return HttpResponse(html)
 
@@ -219,7 +209,7 @@ def unsubscribe(request,p):
 def unsubscribed(request,p):
     if Subscription.objects.get(unsubkey=p):
         u = Subscription.objects.get(unsubkey=p)
-        print u
+
 	if u.is_active == 1:
 		u.is_active = 2
 		u.save()
