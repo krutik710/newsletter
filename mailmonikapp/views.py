@@ -5,11 +5,7 @@ from email.MIMEMultipart import MIMEMultipart
 from email.MIMEText import MIMEText
 
 from django.core.mail import send_mail
-<<<<<<< HEAD
 from django.http import HttpResponse,Http404,JsonResponse
-=======
-from django.http import HttpResponse, Http404
->>>>>>> 10b7c5e32c94689ccc170093d0bbf77722c6c762
 from django.shortcuts import render
 
 import smtplib
@@ -91,11 +87,7 @@ def api_subscribe(request):
 
 def subscription(request):
     if request.method == 'POST':
-<<<<<<< HEAD
-        
-=======
 
->>>>>>> 10b7c5e32c94689ccc170093d0bbf77722c6c762
         subscribermail = request.POST.get('email')
 
         hash = hashlib.sha1()
@@ -204,11 +196,7 @@ def msg(request):
 def mail(request):
     if request.method == 'POST':
         sub = request.POST.get('sub')
-<<<<<<< HEAD
 
-
-=======
->>>>>>> 10b7c5e32c94689ccc170093d0bbf77722c6c762
 
         for u in Subscription.objects.filter(is_active=1):
             fromaddr = usermail
@@ -252,19 +240,19 @@ def mail(request):
         return HttpResponse(html)
 
 
-<<<<<<< HEAD
+
 def unsubscribe(request,p):
     if Subscription.objects.filter(unsubkey=p):
         instancetemp = Subscription.objects.filter(unsubkey=p)
         return render(request,'unsubscribed.html',{ 'instance' : instancetemp })
     
-=======
+
 def unsubscribe(request, p):
     if Subscription.objects.filter(unsubkey=p):
         instancetemp = Subscription.objects.filter(unsubkey=p)
         return render(request, 'unsubscribed.html', {'instance': instancetemp})
 
->>>>>>> 10b7c5e32c94689ccc170093d0bbf77722c6c762
+
     else:
         html = "<html><body>Invalid Account</body></html>"
         return HttpResponse(html)
@@ -275,20 +263,18 @@ def unsubscribed(request, p):
         u = Subscription.objects.get(unsubkey=p)
 
     if u.is_active == 1:
-<<<<<<< HEAD
-       u.is_active = 2
-       u.save()
-       html = "<html><body>Sucessfully Unsubscribed</body></html>"
-       return HttpResponse(html)
+        u.is_active = 2
+        u.save()
+        html = "<html><body>Sucessfully Unsubscribed</body></html>"
+        return HttpResponse(html)
 
-=======
+
         u.is_active = 2
         u.save()
 
         html = "<html><body>Sucessfully Unsubscribed</body></html>"
         return HttpResponse(html)
 
->>>>>>> 10b7c5e32c94689ccc170093d0bbf77722c6c762
     else:
         html = "<html><body>Invalid Account</body></html>"
         return HttpResponse(html)
