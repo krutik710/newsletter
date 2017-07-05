@@ -13,7 +13,7 @@ import hashlib
 import time
 import datetime
 
-from mailmonik.settings_local import usermail,password
+from mailmonik.settings_local import usermail,password,smtpserver,port
 from mailmonikapp.models import Subscription,Newsletter
 
 # Create your views here.
@@ -23,6 +23,10 @@ def values():
 	usermail = usermail
 	global password
 	password = password
+    global smtpserver
+    ser = smtpserver
+    global port
+    port = port
 
 
 
@@ -62,7 +66,7 @@ def subscription(request):
         msg.attach(MIMEText(body, 'plain'))
 
  
-        server = smtplib.SMTP('smtp.gmail.com', 587)
+        server = smtplib.SMTP(smtpserver, port)
         server.starttls()
         server.login(fromaddr, password)
         text = msg.as_string()
@@ -124,7 +128,7 @@ def subscription_complete(request,p):
         msg.attach(part1)
         msg.attach(part2)
 
-        server = smtplib.SMTP('smtp.gmail.com', 587)
+        server = smtplib.SMTP(smtpserver, port)
         server.starttls()
         server.login(fromaddr, password)
         text = msg.as_string()
@@ -158,7 +162,7 @@ def mail(request):
             msg = MIMEMultipart()
             msg['From'] = fromaddr
  
-            server = smtplib.SMTP('smtp.gmail.com', 587)
+            server = smtplib.SMTP(smtpserver, port)
             server.starttls()
             server.login(fromaddr, password)
             toaddr = u.email

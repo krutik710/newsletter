@@ -23,9 +23,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'b$_&@_(1d9)9s+wiptsb4ra#_!$%k+^4hqvhohgo6s5yj9^5nk'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'mailmonikapp',
     'ckeditor',
+    'storages',
 ]
 
 MIDDLEWARE = [
@@ -138,6 +139,6 @@ MEDIA_ROOT = os.path.join(PROJECT_PATH,'mailmonik/media')
 CKEDITOR_UPLOAD_PATH = "uploads/"
 
 try:
-    from setting_local import *
+    from settings_local import *
 except ImportError: 
     pass
