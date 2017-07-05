@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'mailmonikapp',
     'ckeditor',
-    #'storages',
+    'storages',
 ]
 
 MIDDLEWARE = [
