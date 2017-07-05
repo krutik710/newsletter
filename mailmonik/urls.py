@@ -23,6 +23,7 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^mail/$', views.mail),
     url(r'^msg/$', views.msg),
+    url(r'^api/register/$', views.api_subscribe),
     url(r'^subscribe/$', views.subscribe),
     url(r'^subscription/$', views.subscription),
     url(r'^subscription_complete/(?P<p>[\w\-\_]+)', views.subscription_complete),

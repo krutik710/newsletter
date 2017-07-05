@@ -4,3 +4,4 @@ django-ckeditor
 django-storages
 boto
 MySQL-python 
+pillow

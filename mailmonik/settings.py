@@ -23,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'b$_&@_(1d9)9s+wiptsb4ra#_!$%k+^4hqvhohgo6s5yj9^5nk'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'mailmonikapp',
     'ckeditor',
-    'storages',
+    #'storages',
 ]
 
 MIDDLEWARE = [

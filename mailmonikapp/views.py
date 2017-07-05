@@ -5,7 +5,7 @@ from email.MIMEMultipart import MIMEMultipart
 from email.MIMEText import MIMEText
 
 from django.core.mail import send_mail
-from django.http import HttpResponse,Http404
+from django.http import HttpResponse,Http404,JsonResponse
 from django.shortcuts import render
 
 import smtplib
@@ -23,11 +23,72 @@ def subscribe(request):
 	return render(request,"subscribe.html")
 
 
+def api_subscribe(request):
+        try:
+            subscribermail = request.GET.get('email')
+            print subscribermail
+
+            hash = hashlib.sha1()
+            now = datetime.datetime.now()
+            hash.update(str(now) + subscribermail + 'kuttu_is_best')
+            subkey = hash.hexdigest()
+
+            hash = hashlib.sha1()
+            now = datetime.datetime.now()
+            hash.update(str(now) + subscribermail + 'kuttu_is_worst')
+            unsubkey = hash.hexdigest()
+
+
+            fromaddr = usermail
+            toaddr = subscribermail
+            msg = MIMEMultipart()
+            msg['From'] = fromaddr
+            msg['To'] = toaddr
+            msg['Subject'] = "Confirmational Email"
+
+            domain = request.get_host()
+            scheme = request.is_secure() and "https" or "http"
+
+            body = "Please Click On The Link To Subscribe: {0}://{1}/subscription_complete/{2}".format(scheme, domain,
+                                                                                                   subkey)
+            part1 = MIMEText(body, 'plain')
+            msg.attach(MIMEText(body, 'plain'))
+
+            server = smtplib.SMTP(smtpserver, port)
+            server.starttls()
+            server.login(fromaddr, password)
+            text = msg.as_string()
+            server.sendmail(fromaddr, toaddr, text)
+            server.quit()
+
+            checkmail = []
+
+            for u in Subscription.objects.all():
+                checkmail.append(u.email)
+
+            if subscribermail in checkmail:
+                user = Subscription.objects.get(email=subscribermail)
+                user.is_active = 0
+                user.subkey = subkey
+                user.unsubkey = unsubkey
+                user.save()
+
+            else:
+                user = Subscription.objects.create(email=subscribermail, subkey=subkey, unsubkey=unsubkey)
+
+            return JsonResponse({'success':'True'})
+
+        except:
+            return JsonResponse({'success':'False'})
+
+
+
+
 
 def subscription(request):
-	if request.method == 'POST':
+    if request.method == 'POST':
         
-		subscribermail = request.POST.get('email')
+        subscribermail = request.POST.get('email')
 
         hash = hashlib.sha1()
         now = datetime.datetime.now()
@@ -140,8 +201,8 @@ def msg(request):
 
 
 def mail(request):
-	if request.method == 'POST':
-	    sub = request.POST.get('sub')
+    if request.method == 'POST':
+        sub = request.POST.get('sub')
 
 
 
@@ -188,11 +249,11 @@ def mail(request):
 
 
 def unsubscribe(request,p):
-	if Subscription.objects.filter(unsubkey=p):
+    if Subscription.objects.filter(unsubkey=p):
         instancetemp = Subscription.objects.filter(unsubkey=p)
         return render(request,'unsubscribed.html',{ 'instance' : instancetemp })
     
-	else:
+    else:
         html = "<html><body>Invalid Account</body></html>"
         return HttpResponse(html)
 
@@ -202,13 +263,12 @@ def unsubscribed(request,p):
     if Subscription.objects.get(unsubkey=p):
         u = Subscription.objects.get(unsubkey=p)
 
-	if u.is_active == 1:
-        u.is_active = 2
-        u.save()
+    if u.is_active == 1:
+       u.is_active = 2
+       u.save()
+       html = "<html><body>Sucessfully Unsubscribed</body></html>"
+       return HttpResponse(html)
 
-        html = "<html><body>Sucessfully Unsubscribed</body></html>"
-        return HttpResponse(html)
-        
-	else:
+    else:
         html = "<html><body>Invalid Account</body></html>"
         return HttpResponse(html)
