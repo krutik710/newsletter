@@ -127,7 +127,7 @@ def subscription(request):
         msg = MIMEMultipart()
         msg['From'] = fromaddr
         msg['To'] = toaddr
-        msg['Subject'] = "Confirmational Email"
+        
 
         domain = request.get_host()
         scheme = request.is_secure() and "https" or "http"
