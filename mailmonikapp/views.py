@@ -14,7 +14,7 @@ import time
 import datetime
 
 from mailmonik.settings_local import usermail, password, smtpserver, port
-from mailmonikapp.models import Subscription, Newsletter
+from mailmonikapp.models import Subscription, Newsletter,SubscriptionComplete_Email,Welcome_Email
 
 
 # Create your views here.
@@ -22,6 +22,9 @@ from mailmonikapp.models import Subscription, Newsletter
 
 def subscribe(request):
     return render(request, "subscribe.html")
+
+
+
 
 def api_subscribe(request):
         try:
@@ -44,15 +47,34 @@ def api_subscribe(request):
             msg = MIMEMultipart()
             msg['From'] = fromaddr
             msg['To'] = toaddr
-            msg['Subject'] = "Confirmational Email"
+
+            subscriptiondetails = SubscriptionComplete_Email.objects.get(id=1)
+
+            msg['Subject'] = subscriptiondetails.subssubject
 
             domain = request.get_host()
             scheme = request.is_secure() and "https" or "http"
 
-            body = "Please Click On The Link To Subscribe: {0}://{1}/subscription_complete/{2}".format(scheme, domain,
-                                                                                                   subkey)
+
+            body = subscriptiondetails.subsbody
             part1 = MIMEText(body, 'plain')
-            msg.attach(MIMEText(body, 'plain'))
+            msg.attach(part1)
+
+
+            html = subscriptiondetails.subshtml
+            part2 = MIMEText(html,'html')
+            msg.attach(part2)
+
+            
+            unsub_link = "{0}://{1}/subscription_complete/{2}".format(scheme,domain,subkey)
+            part3 = MIMEText(u'<center>Please click <a href="'+unsub_link+'" style="font-size:16px;">here to complete your subscription</a> to our newsletter</center>','html')
+            msg.attach(part3)
+            
+
+            link = "You may alternatively paste this link in your browser to compelete subscription: {0}://{1}/subscription_complete/{2}".format(scheme,domain,subkey)
+            part4 = MIMEText(link,'plain')
+            msg.attach(part4)
+
 
             server = smtplib.SMTP(smtpserver, port)
             server.starttls()
@@ -110,10 +132,32 @@ def subscription(request):
         domain = request.get_host()
         scheme = request.is_secure() and "https" or "http"
 
-        body = "Please Click On The Link To Subscribe: {0}://{1}/subscription_complete/{2}".format(scheme, domain,
-                                                                                                   subkey)
+        subscriptiondetails = SubscriptionComplete_Email.objects.get(id=1)
+
+        msg['Subject'] = subscriptiondetails.subssubject
+
+        domain = request.get_host()
+        scheme = request.is_secure() and "https" or "http"
+
+
+        body = subscriptiondetails.subsbody
         part1 = MIMEText(body, 'plain')
-        msg.attach(MIMEText(body, 'plain'))
+        msg.attach(part1)
+
+
+        html = subscriptiondetails.subshtml
+        part2 = MIMEText(html,'html')
+        msg.attach(part2)
+
+        
+        unsub_link = "{0}://{1}/subscription_complete/{2}".format(scheme,domain,subkey)
+        part3 = MIMEText(u'<center>Please click <a href="'+unsub_link+'" style="font-size:16px;">here to complete your subscription</a> to our newsletter</center>','html')
+        msg.attach(part3)
+
+
+        link = "You may alternatively paste this link in your browser to compelete subscription: {0}://{1}/subscription_complete/{2}".format(scheme,domain,subkey)
+        part4 = MIMEText(link,'plain')
+        msg.attach(part4)
 
         server = smtplib.SMTP(smtpserver, port)
         server.starttls()
@@ -137,22 +181,27 @@ def subscription(request):
         else:
             user = Subscription.objects.create(email=subscribermail, subkey=subkey, unsubkey=unsubkey)
 
-        html = "<html><body>Please Confirm Your Subscription By Going To The URL Send To Your Mail-ID</body></html>"
+        html = "<html><body>Please Confirm Your Subscription Confirming The Mail Send To Your Email-ID</body></html>"
         return HttpResponse(html)
+
+
+
 
 
 def subscription_complete(request, p):
     subkeys = []
     for u in Subscription.objects.all():
         subkeys.append(u.subkey)
+        print subkeys
         email = u.email
-        unsubkeys = u.unsubkey
 
     if p in subkeys:
         try:
             user = Subscription.objects.get(subkey=p)
+            unsubkeys = user.unsubkey
             user.is_active = 1
             user.save()
+
         except:
             raise Http404
 
@@ -161,17 +210,29 @@ def subscription_complete(request, p):
         msg = MIMEMultipart()
         msg['From'] = fromaddr
         msg['To'] = toaddr
-        msg['Subject'] = "Subscription Complete"
+
+
+        welcomedetails = Welcome_Email.objects.get(id=1)
+
+        msg['Subject'] = welcomedetails.welcomesubject
 
         domain = request.get_host()
         scheme = request.is_secure() and "https" or "http"
 
-        body = "Welcome! Hope You Have A Great Time"
+        body = welcomedetails.welcomebody
         part1 = MIMEText(body, 'plain')
-        unsubscribelink = "To Unsubscribe Visit: {0}://{1}/{2}/unsubscribe".format(scheme, domain, unsubkeys)
-        part2 = MIMEText(unsubscribelink, 'plain')
         msg.attach(part1)
+
+
+        html = welcomedetails.welcomehtml
+        part2 = MIMEText(html,'html')
         msg.attach(part2)
+
+        
+        unsub_link = "{0}://{1}/{2}/unsubscribe".format(scheme,domain,unsubkeys)
+        part3 = MIMEText(u'<a href="'+unsub_link+'" style="font-size:12px;"><center>Click Here To Unsubscribe</center></a>','html')
+        msg.attach(part3)
+
 
         server = smtplib.SMTP(smtpserver, port)
         server.starttls()
@@ -184,6 +245,10 @@ def subscription_complete(request, p):
         return HttpResponse(html)
 
 
+
+
+
+
 def msg(request):
     if request.user.is_authenticated():
         subjects = Newsletter.objects.filter(sent_at=None)
@@ -193,10 +258,14 @@ def msg(request):
         return HttpResponse(html)
 
 
+
+
+
+
 def mail(request):
     if request.method == 'POST':
         sub = request.POST.get('sub')
-
+        print sub
 
         for u in Subscription.objects.filter(is_active=1):
             fromaddr = usermail
@@ -217,18 +286,22 @@ def mail(request):
             msg['Subject'] = newsletter.subject
             body = newsletter.body
             html = newsletter.html
+            
             part2 = MIMEText(html, 'html')
             part1 = MIMEText(body, 'plain')
-            unsubscribelink = "To Unsubscribe Visit: {0}://{1}/{2}/unsubscribe".format(scheme, domain, u.unsubkey)
-            part3 = MIMEText(unsubscribelink, 'plain ')
-
+            
+            
+            unsub_link = "{0}://{1}/{2}/unsubscribe".format(scheme,domain,u.unsubkey)
+            part3 = MIMEText(u'<a href="'+unsub_link+'" style="font-size:12px;"><center>Click Here To Unsubscribe</center></a>','html')
+        
             msg.attach(part1)
             msg.attach(part2)
             msg.attach(part3)
-            text = msg.as_string()
 
+            text = msg.as_string()
             server.sendmail(fromaddr, toaddr, text)
             server.quit()
+            print '1'
 
         now = datetime.datetime.now()
 
@@ -240,16 +313,15 @@ def mail(request):
         return HttpResponse(html)
 
 
-
-def unsubscribe(request,p):
-    if Subscription.objects.filter(unsubkey=p):
-        instancetemp = Subscription.objects.filter(unsubkey=p)
-        return render(request,'unsubscribed.html',{ 'instance' : instancetemp })
     
 
+
+
 def unsubscribe(request, p):
-    if Subscription.objects.filter(unsubkey=p):
+    print p
+    if Subscription.objects.get(unsubkey=p):
         instancetemp = Subscription.objects.filter(unsubkey=p)
+        print instancetemp
         return render(request, 'unsubscribed.html', {'instance': instancetemp})
 
 
@@ -258,14 +330,17 @@ def unsubscribe(request, p):
         return HttpResponse(html)
 
 
+
+
 def unsubscribed(request, p):
     if Subscription.objects.get(unsubkey=p):
         u = Subscription.objects.get(unsubkey=p)
+        print u
 
     if u.is_active == 1:
         u.is_active = 2
         u.save()
-        html = "<html><body>Sucessfully Unsubscribed</body></html>"
+        html = "<html><body><h1>Sucessfully Unsubscribed</h1></body></html>"
         return HttpResponse(html)
 
 

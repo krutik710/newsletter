@@ -1,5 +1,5 @@
 from django.contrib import admin
-from mailmonikapp.models import Newsletter,Subscription
+from mailmonikapp.models import Subscription, Newsletter,SubscriptionComplete_Email,Welcome_Email
 # Register your models here.
 
 class SubscriptionAdmin(admin.ModelAdmin):
@@ -17,5 +17,6 @@ class NewsletterAdmin(admin.ModelAdmin):
 
 admin.site.register(Newsletter,NewsletterAdmin)
 admin.site.register(Subscription,SubscriptionAdmin)
-
+admin.site.register(Welcome_Email)
+admin.site.register(SubscriptionComplete_Email)
 

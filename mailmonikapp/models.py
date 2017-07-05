@@ -25,3 +25,22 @@ class Newsletter(models.Model):
 
     def __str__(self):
         return self.subject
+
+
+class SubscriptionComplete_Email(models.Model):
+    subssubject = models.CharField(max_length=1000)
+    subsbody = models.TextField(blank=True)
+    subshtml = RichTextField(config_name='content')
+
+    def __str__(self):
+        return self.subssubject
+
+
+class Welcome_Email(models.Model):
+    welcomesubject = models.CharField(max_length=1000)
+    welcomebody = models.TextField(blank=True)
+    welcomehtml = RichTextField(config_name='content')
+
+    def __str__(self):
+        return self.welcomesubject
+
