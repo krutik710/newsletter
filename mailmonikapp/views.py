@@ -188,13 +188,13 @@ def mail(request):
 
 
 def unsubscribe(request,p):
-		if Subscription.objects.filter(unsubkey=p):
-            instancetemp = Subscription.objects.filter(unsubkey=p)
-			return render(request,'unsubscribed.html',{ 'instance' : instancetemp })
+	if Subscription.objects.filter(unsubkey=p):
+        instancetemp = Subscription.objects.filter(unsubkey=p)
+        return render(request,'unsubscribed.html',{ 'instance' : instancetemp })
     
-		else:
-			html = "<html><body>Invalid Account</body></html>"
-			return HttpResponse(html)
+	else:
+        html = "<html><body>Invalid Account</body></html>"
+        return HttpResponse(html)
 
 
 
