@@ -18,18 +18,6 @@ from mailmonikapp.models import Subscription,Newsletter
 
 # Create your views here.
 
-def values():
-	global usermail
-	usermail = usermail
-	global password
-	password = password
-    global smtpserver
-    ser = smtpserver
-    global port
-    port = port
-
-
-
 
 def subscribe(request):
 	return render(request,"subscribe.html")
@@ -201,7 +189,7 @@ def mail(request):
 
 def unsubscribe(request,p):
 		if Subscription.objects.filter(unsubkey=p):
-            		instancetemp = Subscription.objects.filter(unsubkey=p)
+            instancetemp = Subscription.objects.filter(unsubkey=p)
 			return render(request,'unsubscribed.html',{ 'instance' : instancetemp })
     
 		else:
@@ -215,12 +203,12 @@ def unsubscribed(request,p):
         u = Subscription.objects.get(unsubkey=p)
 
 	if u.is_active == 1:
-		u.is_active = 2
-		u.save()
+        u.is_active = 2
+        u.save()
 
-		html = "<html><body>Sucessfully Unsubscribed</body></html>"
-		return HttpResponse(html)
+        html = "<html><body>Sucessfully Unsubscribed</body></html>"
+        return HttpResponse(html)
         
 	else:
-	    	html = "<html><body>Invalid Account</body></html>"
-	    	return HttpResponse(html)
+        html = "<html><body>Invalid Account</body></html>"
+        return HttpResponse(html)
