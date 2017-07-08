@@ -6,12 +6,14 @@ from email.MIMEText import MIMEText
 
 from django.core.mail import send_mail
 from django.http import HttpResponse,Http404,JsonResponse
+from django.http.multipartparser import MultiPartParser, MultiPartParserError
 from django.shortcuts import render
 
 import smtplib
 import hashlib
 import time
 import datetime
+import json
 
 from mailmonik.settings_local import usermail, password, smtpserver, port
 from mailmonikapp.models import Subscription, Newsletter,SubscriptionComplete_Email,Welcome_Email
@@ -98,12 +100,21 @@ def api_subscribe(request):
             else:
                 user = Subscription.objects.create(email=subscribermail, subkey=subkey, unsubkey=unsubkey)
 
-            return JsonResponse({'success':'True'})
+            response =  'myJsonMethod({ "success": "true" })'
+            bytes = response.encode('utf-8')
+            return HttpResponse(bytes, content_type='application/json')
+            
 
         except:
-            return JsonResponse({'success':'False'})
+            response = 'myJsonMethod({ "success": "true" })'
+            bytes = response.encode('utf-8')
+            return HttpResponse(bytes, content_type='application/json')
 
 
+# response = '{ "somejson": "someValue" }'
+
+# if (request.params.callback != null)
+#     response = request.params.callback + '(' + response + ')'
 
 
 
