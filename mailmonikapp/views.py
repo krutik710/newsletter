@@ -13,7 +13,7 @@ import hashlib
 import time
 import datetime
 
-from mailmonik.settings_local import usermail, password, smtpserver, port
+from mailmonik.settings_local import usermail, password, smtpserver, port, frommail
 from mailmonikapp.models import Subscription, Newsletter,SubscriptionComplete_Email,Welcome_Email
 
 
@@ -42,7 +42,7 @@ def api_subscribe(request):
             unsubkey = hash.hexdigest()
 
 
-            fromaddr = usermail
+            fromaddr = frommail
             toaddr = subscribermail
             msg = MIMEMultipart()
             msg['From'] = fromaddr
@@ -78,7 +78,7 @@ def api_subscribe(request):
 
             server = smtplib.SMTP(smtpserver, port)
             server.starttls()
-            server.login(fromaddr, password)
+            server.login(usermail, password)
             text = msg.as_string()
             server.sendmail(fromaddr, toaddr, text)
             server.quit()
@@ -122,7 +122,7 @@ def subscription(request):
         hash.update(str(now) + subscribermail + 'kuttu_is_worst')
         unsubkey = hash.hexdigest()
 
-        fromaddr = usermail
+        fromaddr = frommail
         toaddr = subscribermail
         msg = MIMEMultipart()
         msg['From'] = fromaddr
@@ -161,7 +161,7 @@ def subscription(request):
 
         server = smtplib.SMTP(smtpserver, port)
         server.starttls()
-        server.login(fromaddr, password)
+        server.login(usermail, password)
         text = msg.as_string()
         server.sendmail(fromaddr, toaddr, text)
         server.quit()
@@ -205,7 +205,7 @@ def subscription_complete(request, p):
         except:
             raise Http404
 
-        fromaddr = usermail
+        fromaddr = frommail
         toaddr = user.email
         msg = MIMEMultipart()
         msg['From'] = fromaddr
@@ -236,7 +236,7 @@ def subscription_complete(request, p):
 
         server = smtplib.SMTP(smtpserver, port)
         server.starttls()
-        server.login(fromaddr, password)
+        server.login(usermail, password)
         text = msg.as_string()
         server.sendmail(fromaddr, toaddr, text)
         server.quit()
@@ -268,13 +268,13 @@ def mail(request):
         print sub
 
         for u in Subscription.objects.filter(is_active=1):
-            fromaddr = usermail
+            fromaddr = frommail
             msg = MIMEMultipart()
             msg['From'] = fromaddr
 
             server = smtplib.SMTP(smtpserver, port)
             server.starttls()
-            server.login(fromaddr, password)
+            server.login(usermail, password)
             toaddr = u.email
             msg['To'] = toaddr
 
