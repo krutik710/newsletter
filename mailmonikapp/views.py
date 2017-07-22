@@ -111,12 +111,6 @@ def api_subscribe(request):
             return HttpResponse(bytes, content_type='application/json')
 
 
-# response = '{ "somejson": "someValue" }'
-
-# if (request.params.callback != null)
-#     response = request.params.callback + '(' + response + ')'
-
-
 
 def subscription(request):
     if request.method == 'POST':
@@ -192,8 +186,7 @@ def subscription(request):
         else:
             user = Subscription.objects.create(email=subscribermail, subkey=subkey, unsubkey=unsubkey)
 
-        html = "<html><body>Please Confirm Your Subscription Confirming The Mail Send To Your Email-ID</body></html>"
-        return HttpResponse(html)
+        return render(request,'confirmation.html')
 
 
 
@@ -252,8 +245,7 @@ def subscription_complete(request, p):
         server.sendmail(fromaddr, toaddr, text)
         server.quit()
 
-        html = "<html><body>Thank You For Subscribing!</body></html>"
-        return HttpResponse(html)
+        return render(request,'thankyou.html')
 
 
 
@@ -351,15 +343,14 @@ def unsubscribed(request, p):
     if u.is_active == 1:
         u.is_active = 2
         u.save()
-        html = "<html><body><h1>Sucessfully Unsubscribed</h1></body></html>"
-        return HttpResponse(html)
+        return render(request,'unsubscribedcomplete.html')
 
 
         u.is_active = 2
         u.save()
 
-        html = "<html><body>Sucessfully Unsubscribed</body></html>"
-        return HttpResponse(html)
+        return render(request,'unsubscribedcomplete.html')
+
 
     else:
         html = "<html><body>Invalid Account</body></html>"
