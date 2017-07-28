@@ -11,10 +11,21 @@
 <!-- Compiled and minified JavaScript -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.99.0/js/materialize.min.js"></script>
 
-<style>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+ <style>
 	body {
-		background: #e2e1e0;
 		text-align: center;
+
+	}
+
+	.my {
+		padding: 2% 2% 2% 2%;
+
+		margin-left: 25%;
+		margin-right: 25%;
 	}
 
 	.card {
@@ -43,23 +54,23 @@
 		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
 		cursor: pointer;
 	}
-</style>
+</style> 
 
 <body>
 
-	<div class="card card-1">
+	<div class="panel panel-default my card card-1" style="outline: 1px solid  #666666;padding: 2% 2%;">
+	<div class="panel-body">
 		<form method='POST' action="/subscription/" autocomplete="on">
 
-			<p>
-				Enter Email-ID
-			</p>
-
-			<input type='email' name='email' placeholder="Email-ID" />
-			<br></br>
-			<button type='submit' name='Submit' value='Submit' class="clickhere">Submit</button>
+		<div class="form-group">
+  <input type="text" class="form-control" id="usr" name="email" style="font-size: 100%;" placeholder="Email">
+</div>
+			<button type='submit' name='Submit' value='Submit' class="btn btn-default">Submit</button>
 
 		</form>
 	</div>
+	</div>
+
 
 </body>
 

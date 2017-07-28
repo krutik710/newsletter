@@ -5,9 +5,14 @@
 	<title>Confirmation</title>
 </head>
 {% load static %}
+
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
 <style>
 	body {
-		background: #e2e1e0;
 		text-align: center;
 	}
 
@@ -15,10 +20,10 @@
 		background: #fff;
 		border-radius: 2px;
 		display: inline-block;
-		margin-top: 5%;
+		margin-top: 15%;
 		height: 55%;
 		position: relative;
-		width: 30%;
+		width: 40%;
 		padding: 5%;
 	}
 
@@ -42,17 +47,17 @@
 <body>
 
 	{% for item in instance %}
-	<div class="card card-1">
+	<div class="card card-1" style="outline: 1px solid  #666666;padding: 2% 2%;">
 		<form method='POST' action="/{{item.unsubkey}}/unsubscribed/" autocomplete="on">
 
 			{% endfor %}
 
 
-			<p>
+			<h4>
 				Do You Really Want To Unsubscribe?
-			</p>
-
-			<button type='submit' name='Submit' value='Submit' class="clickhere">Submit</button>
+			</h4>
+			<br>
+			<button type='submit' name='Submit' value='Submit' class="btn btn-default">Submit</button>
 
 		</form>
 	</div>
